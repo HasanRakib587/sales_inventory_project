@@ -22,3 +22,12 @@ Route::prefix('auth')->group(function(){
     Route::post('register', [AuthController::class, 'register']);
     Route::post('login', [AuthController::class, 'login']);
 });
+
+Route::fallback(function(){
+    return response()->json([
+            'status' => 'error',
+            'message' => 'API Endpoint Not Found',
+            'data' => [],
+            'error' => []
+        ]);
+});

@@ -2,6 +2,7 @@
 
 namespace App\Services\Auth;
 
+use App\Mail\ResetPasswordLinkMail;
 use App\Models\User;
 use Illuminate\Support\Str;
 use Illuminate\Http\Response;
@@ -75,17 +76,9 @@ class AuthService
                 'token' => Hash::make($token),
                 'created_at' => Carbon::now(),
             ]
-        );
-        //Send reset token by email
-        $emailData = [
-            'user' => $user,
-            'token' => $token,
-        ];
-        Mail::send('emails.password-reset', $emailData, function($message) use($user){
-            $message->to($user->email, $user->name);
-            $message->subject('Password Reset Email');
-        });
-
+        );        
+        Mail::to($user->email)->send(new ResetPasswordLinkMail($user,$token));
+                
         return response()->json([
                 'status' => 'success',
                 'message' => 'Password Reset Link Sent to your email',
